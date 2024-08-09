@@ -52,7 +52,7 @@ export default class MainScene extends Scene3D {
     
     this.third.warpSpeed('camera', 'sky', 'grid','light')
     this.third.physics.add.ground({width: 100, height: 100, y:0},{phong: {color: 'green'}})
-    this.third.physics.debug?.disable()
+    this.third.physics.debug?.enable()
     this.man= new ExtendedObject3D()
     this.man.name = 'man';
    // this.addHouse();
@@ -60,7 +60,7 @@ export default class MainScene extends Scene3D {
 
     const animations = ['Jumping', 'LookingAround', 'Running', 'BodyJabCross', 'HipHopDancing','light']
     const pos = { x: 0, y: 1, z: 0 }
-    this.third.load.gltf('/assets/fbx/box_man.glb').then(object => {
+    this.third.load.gltf('/assets/glb/box_man.glb').then(object => {
       const man = object.scene.children[0]
 
         this.man.rotateY(Math.PI + 0.1) // a hack
@@ -87,6 +87,7 @@ export default class MainScene extends Scene3D {
         }
       })
       this.man.anims.play('idle')
+      
     })
    
    
@@ -177,7 +178,7 @@ export default class MainScene extends Scene3D {
               console.log(pos.x /this.cameras.main.width)
             })
           
-           
+           this.addEnemy();
   }
 
   update() {
@@ -276,8 +277,57 @@ export default class MainScene extends Scene3D {
   }
 
   addEnemy(){
+    this.enemy = new ExtendedObject3D();
+   const enemyAnimations = ['Jumping', 'LookingAround', 'Running', 'BodyJabCross', 'HipHopDancing']
+   const pos = {x: 0, y:5,z:0}
+   this.third.load.fbx('/assets/fbx/Idle.fbx').then(object => {
+    this.enemy.add(object);
+    this.third.animationMixers.add(this.man.anims.mixer);
+    this.enemy.anims.play('Idle');
+    this.enemy.traverse(child => {
+      if (child.isMesh) child.castShadow = child.receiveShadow = true
+    })
+    this.enemy.scale.set(0.01, 0.01, 0.01)
+    this.enemy.position.set(pos.x+3, pos.y-2, pos.z)
+
+    this.third.add.existing( this.enemy)
+    //this.third.physics.add.existing( this.enemy, { shape: 'box', offset: { y: -0.5 } })
+    this.third.physics.add.existing(this.enemy, {
+      shape: 'capsule',
+      radius: 60.2,
+      height: 60.6,
+      offset: { y: -0.55 }
+    })
+    this.enemy.body.setFriction(0.8)
+    this.enemy.body.setAngularFactor(0, 0, 0)
+    
+
+
+    enemyAnimations.forEach(key => {
+      if (key === 'Idle') return
+      this.third.load.fbx(`/assets/fbx/${key}.fbx`).then(object => {
+        this.enemy.anims.add(key, object.animations[0])
+      })
+      // this.time.addEvent({
+      //   delay: 2500,
+      //   loop: true,
+      //   callback: () => {
+      //     const anim = Phaser.Math.RND.pick(enemyAnimations)
+      //     console.log(`Set animation ${anim}`)
+      //     this.enemy.anims.play(anim, 350)
+      //   }
+      // })
+    })
+
+   })
+  
+
 
   }
+
+   removeEntity() {
+    
+}
 }
 
 
