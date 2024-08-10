@@ -61,7 +61,7 @@ export default class MainScene extends Scene3D {
     this.third.physics.debug?.disable()
     this.man = new ExtendedObject3D()
     this.man.name = 'man';
-    // this.addHouse();
+     this.addHouse();
     this.addBoxes();
 
     const animations = ['Jumping', 'LookingAround', 'Running', 'BodyJabCross', 'HipHopDancing', 'light']
@@ -256,6 +256,14 @@ export default class MainScene extends Scene3D {
 
 
   addBoxes() {
+    const pos = { x: -15, y: 2.5, z: -24 }
+    this.third.physics.add.box({ y:pos.y, x: pos.x+10, z: pos.z, breakable: true, fractureImpulse: 5 })
+    this.third.physics.add.box({ y:pos.y, x: pos.x+12, z: pos.z, breakable: true, fractureImpulse: 5 })
+    this.third.physics.add.box({ y:pos.y, x: pos.x+14, z: pos.z, breakable: true, fractureImpulse: 5 })
+    this.third.physics.add.box({ y:pos.y+2, x: pos.x+10, z: pos.z, breakable: true, fractureImpulse: 5 })
+    this.third.physics.add.box({ y:pos.y+4, x: pos.x+12, z: pos.z, breakable: true, fractureImpulse: 5 })
+    this.third.physics.add.box({ y:pos.y+6, x: pos.x+14, z: pos.z, breakable: true, fractureImpulse: 5 })
+    this.third.physics.add.box({ y: 30, x: 6, z: 8, breakable: true, fractureImpulse: 5 })
     this.third.physics.add.box({ y: 1, x: 6, z: 8, breakable: true, fractureImpulse: 5 })
     this.third.physics.add.box({ y: 30, x: 6, z: 8, breakable: true, fractureImpulse: 5 })
     this.third.physics.add.box({ y: 32, x: 6, z: 8, breakable: true, fractureImpulse: 5 })
@@ -319,38 +327,37 @@ export default class MainScene extends Scene3D {
       let tmp = this.enemy.position.clone()
       this.tweens.add({
         targets: tmp,
-        duration: 3500,
+        duration: 4500,
         delay: 0,
-        x: '+=8',
+        x: '+=12',
         y:+0.5,
-        z: '+=8',
-        loop:0,
+        z: '+=12',
+        yoyo: true,
+        loop:-1,
         onUpdate: () => {
           if(this.enemyUpdate){
             this.enemy.body.needUpdate = true
             this.enemy.position.set(tmp.x, tmp.y, tmp.z)
-          }else{
-         
           }
        }
       })
-      this.tweens.add({
-        targets: tmp,
-        duration: 3500,
-        delay: 3500,
-        x: '-=8',
-        y:+0.5,
-        z: '-=8',
-        loop:0,
-        onUpdate: () => {
-          if(this.enemyUpdate){
-            this.enemy.body.needUpdate = true
-            this.enemy.position.set(tmp.x, tmp.y, tmp.z)
-          }else{
+      // this.tweens.add({
+      //   targets: tmp,
+      //   duration: 4500,
+      //   delay: 4500,
+      //   x: '-=12',
+      //   y:+0.5,
+      //   z: '-=12',
+      //   loop:0,
+      //   onUpdate: () => {
+      //     if(this.enemyUpdate){
+      //       this.enemy.body.needUpdate = true
+      //       this.enemy.position.set(tmp.x, tmp.y, tmp.z)
+      //     }else{
          
-          }
-       }
-      })
+      //     }
+      //  }
+      // })
       this.overLapWithEnemy();
       this.enemyAnimations.forEach(key => {
         if (key === 'Idle') return
